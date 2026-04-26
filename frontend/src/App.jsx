@@ -10,10 +10,10 @@ export default function App() {
   const [history, setHistory] = useState([]);
   const [loadedEmail, setLoadedEmail] = useState(null);
 
-  // 🌟 UPDATED: Now receives a specific scanId to update existing sessions
+  // Receives a specific scanId to update existing sessions
   const handleScanComplete = (data, text, scanId) => {
     setHistory(prev => {
-      // Remove the previous version of this exact scan session
+      // Remove previous version of this exact scan session
       const filteredHistory = prev.filter(item => item.id !== scanId);
       
       const newItem = {
@@ -25,12 +25,11 @@ export default function App() {
         timestamp: new Date().toISOString()
       };
       
-      // Push the newly updated scan to the very top of the history
+      // Push newly updated scan to the very top of history
       return [newItem, ...filteredHistory];
     });
   };
 
-  // Triggered by History when user clicks "Load & Edit"
   const loadFromHistory = (item) => {
     setLoadedEmail(item);
     setPage("scanner");

@@ -199,13 +199,13 @@ function ExamplesPanel({ onUse, onClose }) {
             className={`ex-tab ${tab === "phishing" ? "ex-tab-active ex-tab-phish" : ""}`}
             onClick={() => setTab("phishing")}
           >
-            🔴 Phishing Examples (12)
+            🔴 Phishing Examples (08)
           </button>
           <button
             className={`ex-tab ${tab === "legitimate" ? "ex-tab-active ex-tab-safe" : ""}`}
             onClick={() => setTab("legitimate")}
           >
-            🟢 Legitimate Examples (12)
+            🟢 Legitimate Examples (08)
           </button>
         </div>
         <div className="ex-list">
@@ -244,9 +244,8 @@ export default function Scanner({ onScanComplete, loadedEmail, clearLoadedEmail 
   const [dirty,     setDirty]     = useState(false);
   const [showEx,    setShowEx]    = useState(false);
 
-  // 🌟 NEW: Track the active session ID so we can update history instead of duplicating
+  // ── Evasion & Details state ────────────────────────────────────────────────
   const [currentScanId,  setCurrentScanId]  = useState(null);
-
   const [evasions,       setEvasions]       = useState(null);
   const [evasionLoading, setEvasionLoading] = useState(false);
   const [swapped,        setSwapped]        = useState({});
@@ -262,9 +261,7 @@ export default function Scanner({ onScanComplete, loadedEmail, clearLoadedEmail 
   // 🌟 Trigger load when user selects an item from History
   useEffect(() => {
     if (loadedEmail) {
-      setCurrentScanId(loadedEmail.id); // Resume the existing session ID!
-      
-      // Reset local state cleanly
+      setCurrentScanId(loadedEmail.id); 
       setResult(null);
       setLimeMap(null);
       setDirty(false);
@@ -279,8 +276,6 @@ export default function Scanner({ onScanComplete, loadedEmail, clearLoadedEmail 
       if (editorRef.current) {
         editorRef.current.innerHTML = buildHTML(loadedEmail.text, null);
       }
-      
-      // Instantly analyze to populate the visuals
       analyze(loadedEmail.text, loadedEmail.id);
       clearLoadedEmail();
     }
@@ -326,7 +321,7 @@ export default function Scanner({ onScanComplete, loadedEmail, clearLoadedEmail 
   const handleMouseLeave = useCallback(() => setTooltip(null), []);
 
   const loadExample = useCallback((text) => {
-    setCurrentScanId(null); // 🌟 Loading a new example resets the session
+    setCurrentScanId(null);
     setResult(null);
     setLimeMap(null);
     setDirty(false);
@@ -352,7 +347,6 @@ export default function Scanner({ onScanComplete, loadedEmail, clearLoadedEmail 
     setError("");
     setDirty(false);
 
-    // 🌟 Identify the session
     const scanIdToUse = overrideId || currentScanId || Date.now();
     if (!currentScanId && !overrideId) setCurrentScanId(scanIdToUse);
 
@@ -369,7 +363,6 @@ export default function Scanner({ onScanComplete, loadedEmail, clearLoadedEmail 
       const data = await res.json();
       setResult(data);
       
-      // 🌟 Pass the scanIdToUse to History so it updates instead of duplicates
       if(onScanComplete) onScanComplete(data, body, scanIdToUse);
       
       const map = {};
@@ -382,7 +375,6 @@ export default function Scanner({ onScanComplete, loadedEmail, clearLoadedEmail 
       const el = editorRef.current;
       if (el) el.innerHTML = buildHTML(displayText, map);
 
-      // Auto-fetch evasions if phishing
       if (data.prediction === 1) {
         fetchEvasions(data, displayText, [], false);
         setSafeDisclaimer(false);
@@ -403,7 +395,7 @@ export default function Scanner({ onScanComplete, loadedEmail, clearLoadedEmail 
   }, [emailText, onScanComplete, result, currentScanId]);
 
   const reset = useCallback(() => {
-    setCurrentScanId(null); // 🌟 Clicking New Scan starts a new session
+    setCurrentScanId(null);
     setResult(null);
     setLimeMap(null);
     setEmailText("");
@@ -419,7 +411,6 @@ export default function Scanner({ onScanComplete, loadedEmail, clearLoadedEmail 
     if (editorRef.current) editorRef.current.innerHTML = "";
   }, []);
 
-  // ── fetch evasion suggestions ──────────────────────────────────────────
   const fetchEvasions = useCallback(async (currentResult, currentEmailText, skipWords, append) => {
     if (!currentResult) return;
     setEvasionLoading(true);
@@ -523,12 +514,12 @@ export default function Scanner({ onScanComplete, loadedEmail, clearLoadedEmail 
 
       {showEx && (
         <ExamplesPanel
-          onUse={(t) => { loadExample(t); analyze(t); }}
+          onUse={loadExample}
           onClose={() => setShowEx(false)}
         />
       )}
 
-      {/* ── Hero (always visible above editor) ── */}
+      {/* ── Hero ── */}
       <div className="scanner-hero" style={{ marginBottom: hasResult ? 24 : 40 }}>
         <div className="hero-top-row">
           <div className="hero-tag">Explainable AI · Phishing Detection</div>

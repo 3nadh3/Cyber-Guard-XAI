@@ -683,16 +683,8 @@ body {
 .item-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); }
 
 /* ---- Update History Panel Layout ---- */
-.history-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-.history-actions {
-  display: flex;
-  gap: 8px;
-}
+.history-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.history-actions { display: flex; gap: 8px; }
 .history-use-btn {
   background: rgba(56,189,248,0.1); color: var(--accent); border: 1px solid rgba(56,189,248,0.25); border-radius: 4px; padding: 4px 10px; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700; cursor: pointer; text-transform: uppercase; transition: all 0.15s;
 }

@@ -34,7 +34,6 @@ export default function History({ history, onClear, onDelete, onLoad }) {
                 </div>
                 
                 <div className="history-actions">
-                  {/* 🌟 UPDATED: Pass the whole item back so the ID is preserved */}
                   <button className="history-use-btn" onClick={() => onLoad(item)}>
                     Load & Edit
                   </button>
